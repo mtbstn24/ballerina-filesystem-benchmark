@@ -59,8 +59,14 @@ service / on new http:Listener(9090) {
 public function readWriteProcess(int filesize) returns error?{
     filePath = DIR + "file-" + filesize.toString();
     resourcePath = resourceDIR + "file-"+ filesize.toString();
+    float readStart = 0;
     byte[] bytes = check io:fileReadBytes(resourcePath);
+    float readEnd = 0;
+    float ReadDuration = readEnd - readStart;
+    float writeStart = 0;
     check io:fileWriteBytes(filePath,bytes);
+    float writeEnd = 0;
+    float writeDuration = writeEnd - writeStart;
     io:println(filePath);
     io:println("The file created successfully.");
 }
