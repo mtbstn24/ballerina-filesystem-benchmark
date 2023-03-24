@@ -57,6 +57,7 @@ service / on new http:Listener(9090) {
         //     response.statusCode = 404;
         //     response.setPayload("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.\n");
         // }
+        csvString = jsonToCsv();
         check response.setContentType("text/csv");
         //response.statusCode = 200;
         response.setPayload(csvString);
@@ -104,23 +105,6 @@ public function fileProcessMultiple() returns error?{
     io:println(finalDurations.toJson());
     var csvPath = DIR + "csvContent-ballerina.csv";
     check io:fileWriteCsv(csvPath, finalDurations);
-
-    string header = "FileSize (KB),Write Duration (ms),Read Duration (ms),Read and Write Duration (ms)\n";
-    string[] rows = [];
-    rows.push(header);
-
-    foreach var item in finalDurations {
-        string size = item.get("size");
-        string write = item.get("WriteDuration");
-        string read = item.get("ReadDuration");
-        string readwrite = item.get("ReadWriteDuration");
-        string row = size + "," + write + "," + read + "," + readwrite + "\n";
-        rows.push(row);
-    }
-
-    foreach var item in rows {
-        csvString = csvString.'join(item,"\n");
-    }
 
     status = true;
 }
@@ -204,6 +188,27 @@ public function readProcess(string filePath, int filesize) returns error? {
 
     io:println(readDurations.toJson());
     io:println(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
+}
+
+function jsonToCsv() returns string{
+    string header = "FileSize (KB),Write Duration (ms),Read Duration (ms),Read and Write Duration (ms)\n";
+    string[] rows = [];
+    rows.push(header);
+
+    foreach var item in finalDurations {
+        string size = item.get("size");
+        string write = item.get("WriteDuration");
+        string read = item.get("ReadDuration");
+        string readwrite = item.get("ReadWriteDuration");
+        string row = size + "," + write + "," + read + "," + readwrite + "\n";
+        rows.push(row);
+    }
+
+    foreach var item in rows {
+        csvString = csvString.'join(item,"\n");
+    }
+
+    return csvString;
 }
 
 map<string>[] sampleJson  = [
