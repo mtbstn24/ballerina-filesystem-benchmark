@@ -45,16 +45,23 @@ service / on new http:Listener(9090) {
     }
 
     # A resource for get /response path
-    # + return - string response message or error
+    # + return - http response message or error
     resource function get response () returns http:Response|error {
         http:Response response = new;
-        check response.setContentType("text/csv");
-        response.setPayload(finalDurations);
+        if status {
+            check response.setContentType("text/csv");
+            response.statusCode = 200;
+            response.setPayload(finalDurations);
+        }else{
+            check response.setContentType("text/plain");
+            response.statusCode = 404;
+            response.setPayload("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.\n");
+        }
         return response;
     }
 
-    # A resource for get /response path
-    # + return - string response message or error
+    # A resource for get /jsonoutput path
+    # + return - static json response or error
     resource function get jsonoutput () returns json|error {
         return sampleJson;
     }
