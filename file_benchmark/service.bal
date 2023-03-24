@@ -183,6 +183,7 @@ public function readProcess(string filePath, int filesize) returns error? {
 # Description
 # + return - string
 public function jsonToCsv() returns string{
+    csvString = "";
     string header = "FileSize (KB),Write Duration (ms),Read Duration (ms),Read and Write Duration (ms)\n";
     string[] rows = [];
     rows.push(header);
