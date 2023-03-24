@@ -94,6 +94,24 @@ public function fileProcessMultiple() returns error?{
     io:println(finalDurations.toJson());
     var csvPath = DIR + "csvContent-ballerina.csv";
     check io:fileWriteCsv(csvPath, finalDurations);
+
+    string header = "FileSize (KB),Write Duration (ms),Read Duration (ms),Read and Write Duration (ms)\n";
+    string[] rows = [];
+    rows.push(header);
+
+    foreach var item in finalDurations {
+        string size = item.get("size");
+        string write = item.get("WriteDuration");
+        string read = item.get("ReadDuration");
+        string readwrite = item.get("ReadWriteDuration");
+        string row = size + "," + write + "," + read + "," + readwrite + "\n";
+        rows.push(row);
+    }
+
+    foreach var item in rows {
+        csvString = csvString.'join(item,"\n");
+    }
+
     status = true;
 }
 
