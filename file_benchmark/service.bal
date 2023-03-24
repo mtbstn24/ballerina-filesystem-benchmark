@@ -59,7 +59,7 @@ service / on new http:Listener(9090) {
         // }
         check response.setContentType("text/csv");
         //response.statusCode = 200;
-        response.setPayload(finalDurations);
+        response.setPayload(csvString);
         return response;
     }
 
