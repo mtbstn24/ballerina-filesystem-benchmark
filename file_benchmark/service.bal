@@ -8,7 +8,7 @@ import ballerina/http;
 configurable string DIR = "../tmp/";
 const string resourceDIR = "./resource/";
 const int minfilesize = 1024 * 10; //10KB
-const int maxfilesize = 1024 * 1024 * 100; //100MB
+const int maxfilesize = 1024 * 1024 * 60; //60MB
 map<string>[] writeDurations = [];
 map<string>[] readDurations = [];
 map<string>[] finalDurations = [];
