@@ -48,18 +48,8 @@ service / on new http:Listener(9090) {
     # + return - http response message or error
     resource function get response () returns http:Response|error {
         http:Response response = new;
-        // if status {
-        //     check response.setContentType("text/csv");
-        //     response.statusCode = 200;
-        //     response.setPayload(finalDurations);
-        // }else{
-        //     check response.setContentType("text/plain");
-        //     response.statusCode = 404;
-        //     response.setPayload("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.\n");
-        // }
         csvString = jsonToCsv();
         check response.setContentType("text/csv");
-        //response.statusCode = 200;
         response.setPayload(csvString);
         return response;
     }
@@ -190,7 +180,9 @@ public function readProcess(string filePath, int filesize) returns error? {
     io:println(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
 }
 
-function jsonToCsv() returns string{
+# Description
+# + return - string
+public function jsonToCsv() returns string{
     string header = "FileSize (KB),Write Duration (ms),Read Duration (ms),Read and Write Duration (ms)\n";
     string[] rows = [];
     rows.push(header);
