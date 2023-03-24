@@ -29,8 +29,9 @@ service / on new http:Listener(9090) {
     resource function get .() returns string|error {
         string string1 = "Connection successful to the host:" + os:getUsername();
         string string2 = "\nUse the /file endpoint to Benchmark the File oprations.";
-        string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n\n";
-        return string1 + string2 + string3;
+        string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations";
+        string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint\n\n";
+        return string1 + string2 + string3 + string4;
     }
 
     # A resource for get /file path
@@ -50,6 +51,12 @@ service / on new http:Listener(9090) {
         check response.setContentType("text/csv");
         response.setPayload(finalDurations);
         return "accessing the /response endpoint";
+    }
+
+    # A resource for get /response path
+    # + return - string response message or error
+    resource function get jsonoutput () returns json|error {
+        return sampleJson;
     }
 
     public function init() {
@@ -171,8 +178,95 @@ public function readProcess(string filePath, int filesize) returns error? {
     io:println(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
 }
 
-# function to call readWriteProcess multiple times
-# + return - error if any
-public function multipleFileProcess() returns error?{
-
-}
+map<string>[] sampleJson  = [
+    {
+      "_id": "641bdaaa0a5b4af1047d0dde",
+      "index": "1",
+      "guid": "e097b36c-3a93-443e-9a3b-17da59dafcab",
+      "isActive": "false",
+      "balance": "$2,865.23",
+      "picture": "http://placehold.it/32x32",
+      "age": "29",
+      "eyeColor": "brown",
+      "name": "Marina Herrera",
+      "gender": "female",
+      "company": "BLEEKO",
+      "email": "marinaherrera@bleeko.com",
+      "phone": "+1 (913) 512-2676",
+      "address": "880 Amherst Street, Kenmar, California, 5070",
+      "about": "Proident sunt magna elit duis officia in esse labore tempor ipsum id ipsum. Sunt nisi nostrud anim veniam est nisi cupidatat ut minim esse laborum elit. Do cupidatat officia reprehenderit incididunt sit eiusmod excepteur dolor commodo esse nulla. Sit aute nisi veniam cillum aliqua.\r\n",
+      "registered": "2015-11-12T01:02:54 -06:-30",
+      "latitude": "65.668736",
+      "longitude": "53.450258",
+      "tags": [
+        "cillum",
+        "do",
+        "cupidatat",
+        "minim",
+        "do",
+        "sint",
+        "ullamco"
+      ].toJsonString(),
+      "friends": [
+        {
+          "id": 0,
+          "name": "Newman Hamilton"
+        },
+        {
+          "id": 1,
+          "name": "Christi Bond"
+        },
+        {
+          "id": 2,
+          "name": "Nunez Saunders"
+        }
+      ].toJsonString(),
+      "greeting": "Hello, Marina Herrera! You have 2 unread messages.",
+      "favoriteFruit": "banana"
+    },
+    {
+      "_id": "641bdaaa58a952cc84c2a416",
+      "index": "2",
+      "guid": "c414d682-7979-4ea5-bded-042d8d398ee7",
+      "isActive": "false",
+      "balance": "$3,371.83",
+      "picture": "http://placehold.it/32x32",
+      "age": "31",
+      "eyeColor": "green",
+      "name": "Hallie Cardenas",
+      "gender": "female",
+      "company": "PLASMOX",
+      "email": "halliecardenas@plasmox.com",
+      "phone": "+1 (922) 524-3484",
+      "address": "241 Menahan Street, Cecilia, South Dakota, 7736",
+      "about": "Exercitation esse incididunt consequat duis sunt enim in ad elit nostrud tempor nulla aliquip. Proident sint nisi ea fugiat exercitation consequat proident dolor nostrud nostrud ad. Id aliqua sit culpa sit amet ex enim do mollit. Magna fugiat deserunt deserunt eu. Amet veniam ea consequat dolore laborum aliquip occaecat nisi.\r\n",
+      "registered": "2018-09-14T04:45:57 -06:-30",
+      "latitude": "-13.566072",
+      "longitude": "6.398352",
+      "tags": [
+        "labore",
+        "enim",
+        "eu",
+        "laborum",
+        "ullamco",
+        "magna",
+        "magna"
+      ].toJsonString(),
+      "friends": [
+        {
+          "id": 0,
+          "name": "Ochoa Shelton"
+        },
+        {
+          "id": 1,
+          "name": "Maryanne Farley"
+        },
+        {
+          "id": 2,
+          "name": "Greta Welch"
+        }
+      ].toJsonString(),
+      "greeting": "Hello, Hallie Cardenas! You have 10 unread messages.",
+      "favoriteFruit": "banana"
+    }
+];
