@@ -46,11 +46,11 @@ service / on new http:Listener(9090) {
 
     # A resource for get /response path
     # + return - string response message or error
-    resource function get response () returns string|error {
+    resource function get response () returns http:Response|error {
         http:Response response = new;
         check response.setContentType("text/csv");
         response.setPayload(finalDurations);
-        return "accessing the /response endpoint";
+        return response;
     }
 
     # A resource for get /response path
