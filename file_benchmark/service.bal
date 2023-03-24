@@ -8,7 +8,7 @@ import ballerina/http;
 configurable string DIR = "../tmp/";
 const string resourceDIR = "./resource/";
 const int minfilesize = 1024 * 10; //10KB
-const int maxfilesize = 1024 * 1024 * 60; //60MB
+const int maxfilesize = 1024 * 1024 * 100; //100MB
 map<string>[] writeDurations = [];
 map<string>[] readDurations = [];
 map<string>[] finalDurations = [];
@@ -48,15 +48,18 @@ service / on new http:Listener(9090) {
     # + return - http response message or error
     resource function get response () returns http:Response|error {
         http:Response response = new;
-        if status {
-            check response.setContentType("text/csv");
-            response.statusCode = 200;
-            response.setPayload(finalDurations);
-        }else{
-            check response.setContentType("text/plain");
-            response.statusCode = 404;
-            response.setPayload("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.\n");
-        }
+        // if status {
+        //     check response.setContentType("text/csv");
+        //     response.statusCode = 200;
+        //     response.setPayload(finalDurations);
+        // }else{
+        //     check response.setContentType("text/plain");
+        //     response.statusCode = 404;
+        //     response.setPayload("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.\n");
+        // }
+        check response.setContentType("text/csv");
+        //response.statusCode = 200;
+        response.setPayload(finalDurations);
         return response;
     }
 
