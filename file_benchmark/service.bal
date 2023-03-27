@@ -199,12 +199,13 @@ public function jsonToCsv() returns string{
         string write = item.get("WriteDuration");
         string read = item.get("ReadDuration");
         string readwrite = item.get("ReadWriteDuration");
-        string row = size + "," + write + "," + read + "," + readwrite;
+        string row = size + "," + write + "," + read + "," + readwrite + "\n";
         rows.push(row);
     }
 
     foreach var item in rows {
-        csvString = csvString.'join(item,"\n");
+        //csvString = csvString.'join(item,"\n");
+        csvString = csvString + item;
     }
 
     return csvString;
