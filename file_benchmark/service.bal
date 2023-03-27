@@ -30,7 +30,7 @@ service / on new http:Listener(9090) {
         string string1 = "Connection successful to the host:" + os:getUsername();
         string string2 = "\nUse the /file endpoint to Benchmark the File oprations.";
         string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations";
-        string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint\n\n";
+        string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint\nUse the /externalapi endpoint to get a sample json response from an external API\n";
         return string1 + string2 + string3 + string4;
     }
 
