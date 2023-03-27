@@ -60,6 +60,14 @@ service / on new http:Listener(9090) {
         return sampleJson;
     }
 
+    # A resource for get /jexternalapi path
+    # + return - static json response or error
+    resource function get externalapi () returns json|error {
+        http:Client clientEx = check new("https://jsonplaceholder.typicode.com/users");
+        json payload = <json> check clientEx->get("",targetType = json);
+        return payload;
+    }
+
     public function init() {
         log:printInfo("Service started and listening on port 9090");
     }
