@@ -31,7 +31,7 @@ service / on new http:Listener(9090) {
         string string2 = "\nUse the /file endpoint to Benchmark the File oprations.";
         string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations";
         string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint";
-        string string5 = "\nUse the /externalapi endpoint to get a sample json response from an external API\n\n";
+        string string5 = "";
         return string1 + string2 + string3 + string4 + string5;
     }
 
