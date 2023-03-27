@@ -89,8 +89,6 @@ public function fileProcessMultiple() returns error?{
     fileSize = fileSize + 1024*1024*2;
 
     while fileSize<=maxfilesize {
-        // byte[] buffer = [];
-        // byte onebyte = 1;
         // for loop to write the buffer to the file
         var end = fileSize + 1024*1024*2;
         foreach int i in fileSize ... end-1 {
@@ -201,7 +199,7 @@ public function jsonToCsv() returns string{
         string write = item.get("WriteDuration");
         string read = item.get("ReadDuration");
         string readwrite = item.get("ReadWriteDuration");
-        string row = size + "," + write + "," + read + "," + readwrite + "\n";
+        string row = size + "," + write + "," + read + "," + readwrite;
         rows.push(row);
     }
 
