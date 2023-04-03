@@ -68,6 +68,19 @@ service / on new http:Listener(9090) {
         return payload;
     }
 
+    resource function get getFibonacci(string num) returns json|error {
+      time:Utc calStart = time:utcNow(9);
+      int|error numInt = int:fromString(num);
+      int|error fibNumber = get_fibonacci(check numInt);
+      time:Utc calEnd = time:utcNow(9);
+      time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
+      string durationStr = calDurationS.toString();
+      float calDuration = check float:fromString(durationStr)*1000;
+      json res =  { "fibonacciNo": check fibNumber, "CalculationDuration": calDuration };
+      return res;
+      
+    }
+
     public function init() {
         log:printInfo("Service started and listening on port 9090");
     }
@@ -209,6 +222,13 @@ public function jsonToCsv() returns string{
     }
 
     return csvString;
+}
+
+function get_fibonacci(int n) returns int {
+    if (n <= 1) {
+      return n;
+    }
+    return get_fibonacci(n - 1) + get_fibonacci(n - 2);
 }
 
 map<string>[] sampleJson  = [
