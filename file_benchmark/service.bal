@@ -18,7 +18,8 @@ int filesizeinKB = 0;
 string csvString = "";
 string filePath = "";
 string resourcePath = "";
-boolean status = false; 
+boolean status = false;
+map<string>[] sJson = [];
 
 # A service representing a network-accessible API
 # bound to port `9090`.
@@ -31,7 +32,8 @@ service / on new http:Listener(9090) {
         string string2 = "\nUse the /file endpoint to Benchmark the File oprations.";
         string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations";
         string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint\nUse the /externalapi endpoint to get a sample json response from an external API\n";
-        return string1 + string2 + string3 + string4;
+        string string5 = "\nUse the /fibanacci/n endpoint to get the nth fibonacci number and Duration\n\n";
+        return string1 + string2 + string3 + string4 + string5;
     }
 
     # A resource for get /file path
@@ -57,7 +59,11 @@ service / on new http:Listener(9090) {
     # A resource for get /jsonoutput path
     # + return - static json response or error
     resource function get jsonoutput () returns json|error {
-        return sampleJson;
+        sJson = [];
+        sJson.removeAll();
+        sJson = sampleJson.clone();
+        sJson.push({"time": time:utcNow().toString()});
+        return sJson.toJson();
     }
 
     # A resource for get /jexternalapi path
