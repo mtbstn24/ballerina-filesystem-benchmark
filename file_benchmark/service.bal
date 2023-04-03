@@ -68,10 +68,17 @@ service / on new http:Listener(9090) {
         return payload;
     }
 
-    resource function get getFibonacci(string num) returns int|error {
+    resource function get getFibonacci(string num) returns json|error {
+      time:Utc calStart = time:utcNow(9);
       int|error numInt = int:fromString(num);
       int|error fibNumber = get_fibonacci(check numInt);
-      return fibNumber;
+      time:Utc calEnd = time:utcNow(9);
+      time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
+      string durationStr = calDurationS.toString();
+      float calDuration = check float:fromString(durationStr)*1000;
+      json res =  { "fibonacciNo": check fibNumber, "CalculationDuration": calDuration };
+      return res;
+      
     }
 
     public function init() {
