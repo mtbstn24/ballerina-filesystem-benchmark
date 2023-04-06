@@ -12,10 +12,12 @@ const int maxfilesize = 1024 * 1024 * 100; //100MB
 map<string>[] writeDurations = [];
 map<string>[] readDurations = [];
 map<string>[] finalDurations = [];
+map<string>[] fibDurations = [];
 float writeDuration = 0;
 float readDuration = 0;
 int filesizeinKB = 0;
 string csvString = "";
+string fibString = "";
 string filePath = "";
 string resourcePath = "";
 boolean status = false;
@@ -32,14 +34,16 @@ service / on new http:Listener(9090) {
         string string2 = "\nUse the /file endpoint to Benchmark the File oprations.";
         string string3 = "\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations";
         string string4 = "\nUse the /jsonoutput endpoint to get a sample json endpoint\nUse the /externalapi endpoint to get a sample json response from an external API\n";
-        string string5 = "\nUse the /fibanacci/n endpoint to get the nth fibonacci number and Duration\n\n";
-        return string1 + string2 + string3 + string4 + string5;
+        string string5 = "\nUse the /fibanacci endpoint to calculate the Fibonacci numbers and Durations";
+        string string6 = "\nUse the /fibresponse endpoint to get the Fibonacci Durations\n\n";
+        return string1 + string2 + string3 + string4 + string5 + string6;
     }
 
     # A resource for get /file path
     # + return - string response message or error
     resource function get file () returns http:Response|error {
         finalDurations = [];
+        csvString = "";
         check  fileProcessMultiple();
         http:Response response = new;
         response.setPayload(finalDurations);
@@ -74,17 +78,32 @@ service / on new http:Listener(9090) {
         return payload;
     }
 
-    resource function get getFibonacci(string num) returns json|error {
-      time:Utc calStart = time:utcNow(9);
-      int|error numInt = int:fromString(num);
-      int|error fibNumber = get_fibonacci(check numInt);
-      time:Utc calEnd = time:utcNow(9);
-      time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
-      string durationStr = calDurationS.toString();
-      float calDuration = check float:fromString(durationStr)*1000;
-      json res =  { "fibonacciNo": check fibNumber, "CalculationDuration": calDuration };
-      return res;
-      
+    # A resource for get /getFibonacci path
+    # + return - fib durations as a json response or error
+    resource function get getFibonacci(string num) returns http:Response|error {
+      // time:Utc calStart = time:utcNow(9);
+      // int|error numInt = int:fromString(num);
+      // int|error fibNumber = get_fibonacci(check numInt);
+      // time:Utc calEnd = time:utcNow(9);
+      // time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
+      // string durationStr = calDurationS.toString();
+      // float calDuration = check float:fromString(durationStr)*1000;
+      // json res =  { "fibonacciNo": check fibNumber, "CalculationDuration": calDuration };
+      fibString = "";
+      check get_fibString();
+      http:Response response = new;
+      response.setPayload(fibDurations);
+      return response;
+    }
+
+    # A resource for get /response path
+    # + return - http response message or error
+    resource function get fibresponse () returns http:Response|error {
+        http:Response response = new;
+        fibString = fibjsonToCsv();
+        check response.setContentType("text/csv");
+        response.setPayload(fibString);
+        return response;
     }
 
     public function init() {
@@ -205,7 +224,7 @@ public function readProcess(string filePath, int filesize) returns error? {
     io:println(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
 }
 
-# Description
+# Convert json content to CSV string
 # + return - string
 public function jsonToCsv() returns string{
     csvString = "";
@@ -223,18 +242,74 @@ public function jsonToCsv() returns string{
     }
 
     foreach var item in rows {
-        //csvString = csvString.'join(item,"\n");
         csvString = csvString + item;
     }
-
     return csvString;
 }
 
+# function to get the nth fibonacci value
+# + n - int number
+# + return - int value
 function get_fibonacci(int n) returns int {
     if (n <= 1) {
       return n;
     }
     return get_fibonacci(n - 1) + get_fibonacci(n - 2);
+}
+
+# function to get the nth fibonacci csvString
+# + return - error is exists
+function get_fibString() returns error? {
+    float[] calDurationAvgs = [];
+    int[] number = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44];
+    int[] fibonacciArray = [];
+    fibDurations = [];
+    int result;
+    foreach int i in number {
+        float calDurationSum = 0;
+        foreach int j in 0...5 {
+            time:Utc calStart = time:utcNow(9);
+            result = get_fibonacci(i);
+            time:Utc calEnd = time:utcNow(9);
+            time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
+            string durationStr = calDurationS.toString();
+            float calDuration = check float:fromString(durationStr)*1000;
+            calDurationSum += calDuration;
+        }
+        float calDurationAvg = calDurationSum / 5.0;
+        calDurationAvgs.push(calDurationAvg);
+        fibonacciArray.push(result);
+        map<string> fibDuration = {
+        FibonacciNumber: i.toString(),
+			  FibonacciValue:  result.toString(),
+			  CalDuration:     calDurationAvg.toString()
+      };
+      fibDurations.push(fibDuration);
+    }
+    io:println(fibDurations.toJson());
+}
+
+# Convert fib json content to CSV string
+# + return - string
+public function fibjsonToCsv() returns string{
+    csvString = "";
+    string header = "Fibonacci Number, Fibonacci Value, Calculation Duration (ms)\n";
+    string[] rows = [];
+    rows.push(header);
+
+    foreach var item in fibDurations {
+        string fibnumber = item.get("FibonacciNumber");
+        string fibvalue = item.get("FibonacciValue");
+        string calduration = item.get("CalDuration");
+        string row = fibnumber + "," + fibvalue + "," + calduration + "," + "\n";
+        rows.push(row);
+    }
+
+    foreach var item in rows {
+        fibString = fibString + item;
+    }
+
+    return fibString;
 }
 
 map<string>[] sampleJson  = [
