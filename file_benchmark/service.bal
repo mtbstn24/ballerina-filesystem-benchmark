@@ -81,14 +81,6 @@ service / on new http:Listener(9090) {
     # A resource for get /getFibonacci path
     # + return - fib durations as a json response or error
     resource function get getFibonacci(string num) returns http:Response|error {
-      // time:Utc calStart = time:utcNow(9);
-      // int|error numInt = int:fromString(num);
-      // int|error fibNumber = get_fibonacci(check numInt);
-      // time:Utc calEnd = time:utcNow(9);
-      // time:Seconds calDurationS = time:utcDiffSeconds(calEnd,calStart);
-      // string durationStr = calDurationS.toString();
-      // float calDuration = check float:fromString(durationStr)*1000;
-      // json res =  { "fibonacciNo": check fibNumber, "CalculationDuration": calDuration };
       fibString = "";
       check get_fibString();
       http:Response response = new;
