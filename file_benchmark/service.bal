@@ -80,7 +80,7 @@ service / on new http:Listener(9090) {
 
     # A resource for get /getFibonacci path
     # + return - fib durations as a json response or error
-    resource function get getFibonacci(string num) returns http:Response|error {
+    resource function get getFibonacci() returns http:Response|error {
       fibString = "";
       check get_fibString();
       http:Response response = new;
